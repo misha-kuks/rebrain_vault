@@ -1,0 +1,17 @@
+all:
+  hosts:
+    web01:
+    db01:
+  vars:
+    ansible_user: USER
+    ansible_password: PASS
+
+webservers:
+  hosts:
+    web01:
+      ansible_host: IP
+
+dbservers:
+  hosts:
+    db01:
+      ansible_host: IP

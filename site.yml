@@ -1,0 +1,41 @@
+---
+- name: Install nginx pass
+  hosts: all
+  become: true
+  
+  tasks: 
+  - name: Install packages
+    dnf: 
+      name: nginx
+      state: present
+      update_cache: true
+
+  - name: Change nginx conf
+    template:
+      src: nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+    notify: restart nginx
+
+  - name: Change index.html
+    copy: 
+      src: index.html
+      dest: /usr/share/nginx/html/index.html
+  
+  - name: Install python3-passlib
+    dnf:
+      name: python3-passlib
+      state: present
+ 
+  - name: Create htpasswd
+    htpasswd:
+      path: /etc/nginx/.htpasswd
+      name: "{{ nginx_user }}"
+      password: "{{ nginx_password }}"
+      mode: 0644
+    notify: restart nginx
+
+  handlers:
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
